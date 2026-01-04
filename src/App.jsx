@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
-import TransaksiMasuk from "../pages/TransaksiMasuk";
+import TransaksiMasuk from "./pages/TransaksiMasuk";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 
