@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom"
 import { LayoutDashboard, Receipt, BarChart3 } from "lucide-react"
-import { motion } from "framer-motion"
 
 const menu = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -10,8 +9,8 @@ const menu = [
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-panel dark:bg-darkPanel border-r border-border dark:border-darkBorder px-4 py-6">
-      <h1 className="text-lg font-semibold text-primary mb-8">
+    <div className="h-full bg-panel dark:bg-darkPanel border-r border-border dark:border-darkBorder p-4">
+      <h1 className="text-lg font-semibold text-primary mb-6">
         Proskipaika
       </h1>
 
@@ -19,26 +18,27 @@ export default function Sidebar() {
         {menu.map((item) => {
           const Icon = item.icon
           return (
-            <NavLink key={item.path} to={item.path}>
-              {({ isActive }) => (
-                <motion.div
-                  whileHover={{ x: 6 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm cursor-pointer
-                    ${
-                      isActive
-                        ? "bg-primary text-white shadow-soft"
-                        : "text-muted dark:text-gray-400 hover:bg-surface dark:hover:bg-darkSurface"
-                    }`}
-                >
-                  <Icon size={18} />
-                  {item.name}
-                </motion.div>
-              )}
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `
+                flex items-center gap-3 px-3 py-2 rounded-lg text-sm
+                transition
+                ${
+                  isActive
+                    ? "bg-primary text-white"
+                    : "text-muted hover:bg-surface dark:hover:bg-darkSurface"
+                }
+                `
+              }
+            >
+              <Icon size={18} />
+              {item.name}
             </NavLink>
           )
         })}
       </nav>
-    </aside>
+    </div>
   )
 }

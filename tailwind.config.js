@@ -4,6 +4,12 @@ export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      
+      backgroundImage: {
+         "soft-gradient":
+        "linear-gradient(135deg, rgba(37,99,235,0.08), rgba(99,102,241,0.06))",
+          },
+
       colors: {
         primary: "#2563eb",
         surface: "#f8fafc",
@@ -14,6 +20,9 @@ export default {
         darkSurface: "#020617",
         darkPanel: "#020617",
         darkBorder: "#1e293b",
+            subtle: "#eef2ff",      // light accent
+    darkSubtle: "#0b1220",  // dark accent
+        
       },
       boxShadow: {
         soft: "0 10px 30px rgba(0,0,0,0.08)",
