@@ -1,46 +1,45 @@
-import { suppliersDummy } from "../data/suppliersDummy";
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
-// di dalam InventoryProvider:
-const [suppliers, setSuppliers] = useState(suppliersDummy);
+const InventoryContext = createContext(null);
 
-// relasi sederhana: product.supplierId
-const assignSupplierToProduct = (productId, supplierId) => {
-  setProducts((prev) =>
-    prev.map((p) =>
-      p.id === productId ? { ...p, supplierId } : p
-    )
+export function InventoryProvider({ children }) {
+  const [products, setProducts] = useState([]);
+  const [transaksi, setTransaksi] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+
+  useEffect(() => {
+    fetchProducts();
+    fetchTransaksi();
+    fetchSuppliers();
+  }, []);
+
+  async function fetchProducts() {
+    const { data, error } = await supabase.from("products").select("*");
+    if (!error) setProducts(data || []);
+  }
+
+  async function fetchTransaksi() {
+    const { data, error } = await supabase.from("transactions").select("*");
+    if (!error) setTransaksi(data || []);
+  }
+
+  async function fetchSuppliers() {
+    const { data, error } = await supabase.from("suppliers").select("*");
+    if (!error) setSuppliers(data || []);
+  }
+
+  return (
+    <InventoryContext.Provider
+      value={{ products, transaksi, suppliers }}
+    >
+      {children}
+    </InventoryContext.Provider>
   );
-};
+}
 
-// CRUD supplier
-const addSupplier = (data) => {
-  setSuppliers((prev) => [{ id: Date.now(), ...data }, ...prev]);
-};
-
-const updateSupplier = (id, data) => {
-  setSuppliers((prev) =>
-    prev.map((s) => (s.id === id ? { ...s, ...data } : s))
-  );
-};
-
-const deleteSupplier = (id) => {
-  setSuppliers((prev) => prev.filter((s) => s.id !== id));
-};
-
-return (
-  <InventoryContext.Provider
-    value={{
-      products,
-      transaksi,
-      suppliers,
-      barangMasuk,
-      barangKeluar,
-      addSupplier,
-      updateSupplier,
-      deleteSupplier,
-      assignSupplierToProduct,
-    }}
-  >
-    {children}
-  </InventoryContext.Provider>
-);
+export function useInventory() {
+  const ctx = useContext(InventoryContext);
+  if (!ctx) throw new Error("useInventory must be used inside InventoryProvider");
+  return ctx;
+}
