@@ -1,68 +1,52 @@
-import { useState, useEffect } from "react"
-import Button from "../ui/Button"
+import { useState } from "react";
+import { useInventory } from "../../context/InventoryContext";
 
-export default function TransaksiForm({ onClose, onSubmit, initialData }) {
+export default function TransaksiForm({ type }) {
+  const { addTransaksi } = useInventory();
   const [form, setForm] = useState({
-    kode: "",
-    barang: "",
-    jumlah: "",
     tanggal: "",
-  })
-
-  const [error, setError] = useState({})
-
-  useEffect(() => {
-    if (initialData) setForm(initialData)
-  }, [initialData])
-
-  const validate = () => {
-    const err = {}
-    if (!form.kode) err.kode = "Kode wajib diisi"
-    if (!form.barang) err.barang = "Nama barang wajib diisi"
-    if (!form.jumlah || form.jumlah <= 0)
-      err.jumlah = "Jumlah harus lebih dari 0"
-    if (!form.tanggal) err.tanggal = "Tanggal wajib diisi"
-    setError(err)
-    return Object.keys(err).length === 0
-  }
+    namaBarang: "",
+    jumlah: "",
+    keterangan: "",
+  });
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!validate()) return
-    onSubmit(form)
-    onClose()
-  }
+    e.preventDefault();
+    addTransaksi({ ...form, jenis: type });
+    setForm({ tanggal: "", namaBarang: "", jumlah: "", keterangan: "" });
+  };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      {["kode", "barang", "jumlah", "tanggal"].map((field) => (
-        <div key={field}>
-          <label className="block text-sm font-medium capitalize mb-1">
-            {field}
-          </label>
-          <input
-            type={field === "jumlah" ? "number" : field === "tanggal" ? "date" : "text"}
-            value={form[field]}
-            onChange={(e) =>
-              setForm({ ...form, [field]: e.target.value })
-            }
-            className={`w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500
-              ${error[field] ? "border-red-500" : ""}`}
-          />
-          {error[field] && (
-            <p className="text-xs text-red-500 mt-1">{error[field]}</p>
-          )}
-        </div>
-      ))}
-
-      <div className="flex justify-end gap-2 pt-4">
-        <Button type="button" variant="secondary" onClick={onClose}>
-          Batal
-        </Button>
-        <Button type="submit">
-          Simpan
-        </Button>
-      </div>
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <input
+        type="date"
+        value={form.tanggal}
+        onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
+        className="input"
+        required
+      />
+      <input
+        type="text"
+        placeholder="Nama Barang"
+        value={form.namaBarang}
+        onChange={(e) => setForm({ ...form, namaBarang: e.target.value })}
+        className="input"
+        required
+      />
+      <input
+        type="number"
+        placeholder="Jumlah"
+        value={form.jumlah}
+        onChange={(e) => setForm({ ...form, jumlah: e.target.value })}
+        className="input"
+        required
+      />
+      <button
+        type="submit"
+        className="bg-yellow-400 hover:bg-yellow-500 text-black rounded-lg px-4"
+      >
+        Simpan
+      </button>
     </form>
-  )
+  );
 }

@@ -1,11 +1,14 @@
-import { Inbox } from "lucide-react";
-
-export default function EmptyState({ title, description }) {
+export default function StatCard({ title, value, highlight }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 p-10 text-center">
-      <Inbox className="h-10 w-10 text-slate-400" />
-      <h3 className="mt-4 text-sm font-semibold text-slate-800">{title}</h3>
-      <p className="mt-1 text-sm text-slate-500">{description}</p>
+    <div
+      className={`rounded-xl border p-4 bg-white ${
+        highlight ? "border-yellow-300 bg-yellow-50" : ""
+      }`}
+    >
+      <p className="text-xs text-slate-500">{title}</p>
+      <h2 className="text-2xl font-semibold text-slate-800 mt-1">
+        {value}
+      </h2>
     </div>
   );
 }
