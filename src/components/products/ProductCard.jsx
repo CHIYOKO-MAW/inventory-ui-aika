@@ -1,54 +1,59 @@
-export default function ProductCard({ product }) {
-  const stokStatus =
-    product.stok === 0
-      ? "habis"
-      : product.stok < 10
-      ? "menipis"
-      : "aman";
-
-  const badgeColor =
-    stokStatus === "habis"
-      ? "bg-red-100 text-red-700"
-      : stokStatus === "menipis"
-      ? "bg-yellow-100 text-yellow-700"
-      : "bg-emerald-100 text-emerald-700";
+export default function ProductCard({
+  product,
+  supplier,
+  onEdit,
+  onDelete,
+}) {
+  const harga = Number(product.priceSell || 0);
+  const stok = Number(product.stock || 0);
 
   return (
-    <div className="bg-white border rounded-xl overflow-hidden hover:shadow-md transition">
+    <div className="card overflow-hidden hover:shadow-lg transition">
       {/* IMAGE */}
-      <div className="h-36 bg-slate-100 flex items-center justify-center">
+      {product.imageUrl ? (
         <img
-          src={product.image || "/placeholder.png"}
-          alt={product.nama}
-          className="object-contain h-full"
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full h-40 object-cover"
         />
-      </div>
-
-      {/* BODY */}
-      <div className="p-4 space-y-2">
-        <div className="flex items-start justify-between">
-          <h3 className="font-semibold text-slate-800 text-sm">
-            {product.nama}
-          </h3>
-          <span
-            className={`text-xs px-2 py-1 rounded-full ${badgeColor}`}
-          >
-            {stokStatus}
-          </span>
+      ) : (
+        <div className="w-full h-40 bg-slate-100 flex items-center justify-center text-slate-400">
+          No Image
         </div>
+      )}
 
-        <p className="text-xs text-slate-500">
-          Kategori: {product.kategori}
+      {/* CONTENT */}
+      <div className="p-4 space-y-1">
+        <h3 className="font-semibold">{product.name}</h3>
+
+        <p className="text-sm">
+          Supplier: {supplier?.nama || "-"}
         </p>
 
-        <div className="flex justify-between items-center pt-2">
-          <span className="text-sm font-semibold text-slate-700">
-            Stok: {product.stok}
-          </span>
-          <button className="text-xs text-yellow-600 hover:underline">
-            Detail
-          </button>
-        </div>
+        <p className="text-sm">
+          Stok: {stok}
+        </p>
+
+        <p className="font-semibold">
+          Rp {harga.toLocaleString()}
+        </p>
+      </div>
+
+      {/* ACTION */}
+      <div className="flex gap-2 p-4 pt-0">
+        <button
+          onClick={onEdit}
+          className="flex-1 text-sm rounded-lg border py-1 hover:bg-slate-100"
+        >
+          Edit
+        </button>
+
+        <button
+          onClick={onDelete}
+          className="flex-1 text-sm rounded-lg bg-red-500 text-white py-1 hover:bg-red-600"
+        >
+          Hapus
+        </button>
       </div>
     </div>
   );

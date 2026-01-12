@@ -1,44 +1,47 @@
-import TransaksiForm from "../components/forms/TransaksiForm";
-import DataTable from "../components/ui/DataTable";
-import EmptyState from "../components/ui/EmptyState";
+import { useState } from "react";
 import { useInventory } from "../context/InventoryContext";
 
 export default function TransaksiKeluar() {
-  const { transaksiKeluar } = useInventory();
-
-  const columns = [
-    { header: "Tanggal", accessor: "tanggal" },
-    { header: "Nama Barang", accessor: "namaBarang" },
-    { header: "Jumlah", accessor: "jumlah" },
-    { header: "Tujuan", accessor: "tujuan" },
-  ];
+  const { products, transaksiKeluar } = useInventory();
+  const [productId, setProductId] = useState("");
+  const [qty, setQty] = useState(1);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-800">
-          Transaksi Barang Keluar
-        </h1>
-        <p className="text-sm text-slate-500">
-          Pencatatan barang yang keluar dari gudang
-        </p>
-      </div>
+      <h1>Transaksi Barang Keluar</h1>
 
-      <div className="bg-white border rounded-xl p-6">
-        <h2 className="text-lg font-semibold mb-4 text-slate-700">
-          Tambah Transaksi Keluar
-        </h2>
-        <TransaksiForm type="keluar" />
-      </div>
+      <div className="card p-4 space-y-4 max-w-md">
+        <select
+          className="input"
+          value={productId}
+          onChange={(e) => setProductId(Number(e.target.value))}
+        >
+          <option value="">Pilih Barang</option>
+          {products.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.nama} (stok: {p.stok})
+            </option>
+          ))}
+        </select>
 
-      {transaksiKeluar.length === 0 ? (
-        <EmptyState
-          title="Belum ada transaksi keluar"
-          description="Data transaksi keluar akan muncul di sini setelah ditambahkan."
+        <input
+          type="number"
+          className="input"
+          min={1}
+          value={qty}
+          onChange={(e) => setQty(Number(e.target.value))}
         />
-      ) : (
-        <DataTable columns={columns} data={transaksiKeluar} />
-      )}
+
+        <button
+          className="btn-secondary w-full"
+          onClick={() => {
+            transaksiKeluar(productId, qty);
+            setQty(1);
+          }}
+        >
+          Simpan Transaksi
+        </button>
+      </div>
     </div>
   );
 }

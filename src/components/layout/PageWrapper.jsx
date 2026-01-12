@@ -1,13 +1,7 @@
 export default function PageWrapper({ children }) {
   return (
-    <div
-      className="
-        w-full
-        px-4 sm:px-6 lg:px-8
-        space-y-8
-      "
-    >
+    <main className="flex-1 p-6 bg-slate-50">
       {children}
-    </div>
-  )
+    </main>
+  );
 }

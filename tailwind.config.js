@@ -11,7 +11,14 @@ export default {
           },
 
       colors: {
-        primary: "#2563eb",
+          primary: "#FACC15",        // kuning utama
+         primarySoft: "#FEF9C3",    // kuning lembut
+          grayBg: "#F8FAFC",         // background
+           grayCard: "#F1F5F9",       // card halus
+          grayText: "#475569",       // teks utama
+           grayMuted: "#94A3B8",      // teks sekunder
+
+        
         surface: "#f8fafc",
         panel: "#ffffff",
         border: "#e5e7eb",
@@ -31,6 +38,7 @@ export default {
   },
   plugins: [],
 }
+
 
 
 

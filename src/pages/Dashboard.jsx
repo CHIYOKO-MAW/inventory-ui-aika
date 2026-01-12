@@ -5,122 +5,116 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
-import {
-  Package,
-  ArrowDownCircle,
-  ArrowUpCircle,
-  AlertTriangle,
-} from "lucide-react";
+import { useInventory } from "../context/InventoryContext";
 
-const statCards = [
-  {
-    title: "Total Barang",
-    value: 128,
-    icon: Package,
-    bg: "bg-slate-100",
-  },
-  {
-    title: "Barang Masuk",
-    value: 32,
-    icon: ArrowDownCircle,
-    bg: "bg-emerald-50",
-  },
-  {
-    title: "Barang Keluar",
-    value: 21,
-    icon: ArrowUpCircle,
-    bg: "bg-blue-50",
-  },
-  {
-    title: "Stok Menipis",
-    value: 5,
-    icon: AlertTriangle,
-    bg: "bg-yellow-50",
-  },
-];
-
-const stokKategori = [
-  { name: "Semen", stok: 420 },
-  { name: "Pasir", stok: 300 },
-  { name: "Batu Bata", stok: 260 },
-  { name: "Besi", stok: 180 },
-  { name: "Cat", stok: 140 },
-];
+const COLORS = ["#22c55e", "#ef4444"];
 
 export default function Dashboard() {
+  const {
+    products = [],
+    getRingkasanDashboard,
+    getRiwayatTransaksi,
+  } = useInventory();
+
+  const {
+    totalBarang,
+    totalStok,
+    uangMasuk,
+    uangKeluar,
+  } = getRingkasanDashboard();
+
+  /* ===== STOK PER PRODUK ===== */
+  const stokData = products.map((p) => ({
+    name: p.name,
+    stok: p.stock || 0,
+  }));
+
+  /* ===== TRANSAKSI PIE ===== */
+  const transaksiChart = [
+    { name: "Uang Masuk", value: uangMasuk },
+    { name: "Uang Keluar", value: uangKeluar },
+  ];
+
   return (
     <div className="space-y-8">
-      {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-800">
-          Dashboard
-        </h1>
-        <p className="text-sm text-slate-500">
-          Ringkasan kondisi inventori material
-        </p>
+      <h1 className="text-xl font-semibold">
+        Dashboard Inventori
+      </h1>
+
+      {/* KPI */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <KpiCard label="Total Barang" value={totalBarang} />
+        <KpiCard label="Total Stok" value={totalStok} />
+        <KpiCard
+          label="Uang Masuk"
+          value={`Rp ${uangMasuk.toLocaleString()}`}
+          color="text-green-600"
+        />
+        <KpiCard
+          label="Uang Keluar"
+          value={`Rp ${uangKeluar.toLocaleString()}`}
+          color="text-red-600"
+        />
       </div>
 
-      {/* STAT CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {statCards.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.title}
-              className={`rounded-xl p-5 border border-slate-200 ${item.bg}`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">
-                    {item.title}
-                  </p>
-                  <p className="text-2xl font-bold text-slate-800">
-                    {item.value}
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-white shadow-sm">
-                  <Icon className="w-5 h-5 text-yellow-500" />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* MAIN GRID */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* CHART */}
-        <div className="xl:col-span-2 rounded-xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">
-            Stok per Kategori
-          </h2>
-
-          <div className="h-72">
+      {/* CHART */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* BAR */}
+        <div className="card p-5">
+          <h2 className="mb-4">Stok per Produk</h2>
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stokKategori}>
+              <BarChart data={stokData}>
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="stok" fill="#facc15" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="stok" fill="#38bdf8" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* AKTIVITAS */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">
-            Aktivitas Terakhir
-          </h2>
-
-          <div className="flex flex-col items-center justify-center h-56 text-center text-slate-400 border border-dashed rounded-lg">
-            <p className="text-sm">
-              Belum ada aktivitas terbaru
-            </p>
+        {/* PIE */}
+        <div className="card p-5">
+          <h2 className="mb-4">Perbandingan Transaksi</h2>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={transaksiChart}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={90}
+                  label
+                >
+                  {transaksiChart.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={COLORS[i]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function KpiCard({ label, value, color = "" }) {
+  return (
+    <div className="card p-5">
+      <p>{label}</p>
+      <h2 className={`text-lg font-semibold ${color}`}>
+        {value}
+      </h2>
     </div>
   );
 }

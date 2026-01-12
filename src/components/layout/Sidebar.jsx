@@ -1,29 +1,33 @@
 import { NavLink } from "react-router-dom";
 
-const menu = [
+const menus = [
   { label: "Dashboard", path: "/" },
   { label: "Data Barang", path: "/barang" },
-  { label: "Barang Masuk", path: "/barang-masuk" },
-  { label: "Barang Keluar", path: "/barang-keluar" },
+  { label: "Transaksi", path: "/transaksi" },
   { label: "Supplier", path: "/supplier" },
   { label: "Laporan", path: "/laporan" },
 ];
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 min-h-screen">
-      <div className="p-6 font-semibold text-lg">Aika Inventory</div>
+    <aside className="w-64 bg-slate-900 text-white flex flex-col">
+      {/* HEADER */}
+      <div className="p-5 text-xl font-semibold border-b border-slate-700">
+        Inventory Aika
+      </div>
 
-      <nav className="px-3 space-y-1">
-        {menu.map((m) => (
+      {/* MENU */}
+      <nav className="flex-1 p-3 space-y-1">
+        {menus.map((m) => (
           <NavLink
             key={m.path}
             to={m.path}
+            end
             className={({ isActive }) =>
-              `block px-3 py-2 rounded-lg text-sm transition ${
+              `block rounded-lg px-4 py-2 text-sm transition ${
                 isActive
-                  ? "bg-yellow-100 text-yellow-700 font-medium"
-                  : "text-slate-600 hover:bg-slate-100"
+                  ? "bg-yellow-400 text-black font-medium"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
               }`
             }
           >
@@ -31,6 +35,11 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      {/* FOOTER */}
+      <div className="p-4 text-xs text-slate-400 border-t border-slate-700">
+        © 2026 Inventory System
+      </div>
     </aside>
   );
 }

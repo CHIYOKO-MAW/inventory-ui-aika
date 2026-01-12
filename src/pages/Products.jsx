@@ -1,35 +1,61 @@
-import ProductCard from "../components/products/ProductCard";
-import EmptyState from "../components/ui/EmptyState";
+import { useState } from "react";
 import { useInventory } from "../context/InventoryContext";
+import ProductCard from "../components/products/ProductCard";
+import ProductForm from "../components/products/ProductForm";
+
 
 export default function Products() {
-  const { products } = useInventory();
+  const { products = [], deleteProduct } = useInventory();
+
+  const [showForm, setShowForm] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   return (
     <div className="space-y-6">
       {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-800">
-          Data Barang
-        </h1>
-        <p className="text-sm text-slate-500">
-          Daftar material dan stok yang tersedia di gudang
-        </p>
+      <div className="flex justify-between items-center">
+        <h1>Data Barang</h1>
+        <button
+          className="btn-primary"
+          onClick={() => {
+            setEditData(null);
+            setShowForm(true);
+          }}
+        >
+          + Tambah Barang
+        </button>
       </div>
 
-      {/* CONTENT */}
-      {products.length === 0 ? (
-        <EmptyState
-          title="Belum ada data barang"
-          description="Tambahkan data barang untuk mulai mengelola inventori."
-        />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {products.map((item) => (
-            <ProductCard key={item.id} product={item} />
-          ))}
+      {/* MODAL FORM */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg">
+            <ProductForm
+              initialData={editData}
+              onClose={() => setShowForm(false)}
+            />
+          </div>
         </div>
       )}
+
+      {/* PRODUCT GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {products.length === 0 && (
+          <p className="text-slate-400">Belum ada data barang</p>
+        )}
+
+        {products.map((p) => (
+          <ProductCard
+            key={p.id}
+            product={p}
+            onEdit={() => {
+              setEditData(p);
+              setShowForm(true);
+            }}
+            onDelete={() => deleteProduct(p.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
